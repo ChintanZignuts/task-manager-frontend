@@ -6,10 +6,12 @@ import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
 import { InputText, Button, Card, Image, Message } from "primevue";
 import logo from "../assets/logo.png";
-import axiosIns from "@/services/axios.ts"; // Axios instance
+import axiosIns from "@/services/axios.ts";
+import { useToastMessage } from "@/composables/useToastMessage";
 
 // Router instance
 const router = useRouter();
+const { showToast } = useToastMessage();
 
 // Define form validation resolver
 const resolver = ref(
@@ -45,6 +47,11 @@ const registerUser = async ({ valid, values }) => {
       password2: values.confirmPassword,
     });
     if (response.status === 201) {
+      showToast(
+        "success",
+        "Registration Successful",
+        "You have successfully registered."
+      );
       router.push("/login");
     }
   } catch (error: any) {

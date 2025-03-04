@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { Card, Button, Badge, Divider } from "primevue";
-import { ref } from "vue";
+import { Card, Button } from "primevue";
+// import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 // Sample stats
-const totalTasks = ref(25);
-const completedTasks = ref(12);
-const pendingTasks = ref(totalTasks.value - completedTasks.value);
+// const totalTasks = ref(25);
+// const completedTasks = ref(12);
+// const pendingTasks = ref(totalTasks.value - completedTasks.value);
 </script>
 
 <template>

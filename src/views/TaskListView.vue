@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Card } from "primevue/card";
-import { Button } from "primevue/button";
+import { Button, Card } from "primevue";
 import { useToast } from "primevue/usetoast";
+import TaskAddEditModal from "@/components/TaskAddEditModal.vue";
 
 const toast = useToast();
-
+const dialogVisible = ref(false);
+const editingTask = ref(null);
 // Sample tasks
 const tasks = ref([
   { id: 1, title: "Design UI", status: "pending" },
@@ -34,11 +35,28 @@ const onDrop = (event, newStatus) => {
     });
   }
 };
+const editTask = (task) => {
+  editingTask.value = { ...task };
+  dialogVisible.value = true;
+};
+
+const deleteTask = (taskId) => {
+  tasks.value = tasks.value.filter((task) => task.id !== taskId);
+  toast.add({
+    severity: "info",
+    summary: "Task Deleted",
+    detail: "Task has been removed.",
+    life: 2000,
+  });
+};
 </script>
 
 <template>
   <div class="container mx-auto p-5">
-    <h2 class="text-3xl font-bold text-center mb-5">Task Board</h2>
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="text-3xl font-bold text-center mb-5">Task Board</h2>
+      <Button @click="dialogVisible = true">Add Task</Button>
+    </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <!-- Task Columns -->
@@ -58,11 +76,22 @@ const onDrop = (event, newStatus) => {
           :key="task.id"
           draggable="true"
           @dragstart="onDragStart($event, task)"
-          class="p-3 bg-white rounded-md shadow-md mb-2 cursor-pointer border hover:bg-gray-50"
+          class="p-3 bg-white rounded-md shadow-md mb-2 cursor-pointer border hover:bg-gray-50 flex justify-between items-center"
         >
-          {{ task.title }}
+          <span>{{ task.title }}</span>
+          <div class="flex gap-2">
+            <Button
+              icon="pi pi-pencil"
+              class="p-button-text p-button-sm"
+              @click="editTask(task)"
+            />
+            <Button
+              icon="pi pi-trash"
+              class="p-button-text p-button-sm p-button-danger"
+              @click="deleteTask(task.id)"
+            />
+          </div>
         </div>
-
         <p
           v-if="!tasks.some((t) => t.status === status)"
           class="text-gray-500 text-center"
@@ -71,5 +100,11 @@ const onDrop = (event, newStatus) => {
         </p>
       </div>
     </div>
+
+    <TaskAddEditModal
+      :visible="dialogVisible"
+      :taskData="editingTask"
+      @update:visible="dialogVisible = $event"
+    />
   </div>
 </template>

@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { InputText, Button, Card, Image, Message } from "primevue";
 import { Form } from "@primevue/forms";
-import { useForm } from "@primevue/forms";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
 import axiosIns from "@/services/axios.ts";
