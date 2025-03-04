@@ -4,6 +4,7 @@ import App from "./App.vue";
 import { definePreset } from "@primeuix/themes";
 import PrimeVue from "primevue/config";
 import router from "./router/index.ts";
+import ToastService from "primevue/toastservice";
 // @ts-ignore
 import Aura from "@primeuix/themes/aura";
 
@@ -68,5 +69,6 @@ app.use(PrimeVue, {
     },
   },
 });
+app.use(ToastService);
 app.use(router);
 app.mount("#app");
