@@ -1,18 +1,16 @@
 import axios from "axios";
 import { useRouter } from "vue-router";
 
-// Create Axios instance
 const axiosIns = axios.create({
-  baseURL: "http://127.0.0.1:8000/api", // Base URL of your Django API
+  baseURL: "http://127.0.0.1:8000/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Request Interceptor: Add Authorization Token (if available)
 axiosIns.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const token = localStorage.getItem("access_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,14 +21,13 @@ axiosIns.interceptors.request.use(
   }
 );
 
-// Response Interceptor: Handle Errors Globally
 axiosIns.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token"); // Remove invalid token
+      localStorage.removeItem("token");
       const router = useRouter();
-      router.push("/login"); // Redirect to login if unauthorized
+      router.push("/login");
     }
     return Promise.reject(error);
   }

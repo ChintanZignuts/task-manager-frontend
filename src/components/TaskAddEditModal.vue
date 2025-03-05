@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import {
   Dialog,
   InputText,
@@ -11,13 +11,15 @@ import {
 import { Form } from "@primevue/forms";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
+import axiosIns from "@/services/axios.ts";
 
 const props = defineProps({
   visible: Boolean,
   taskData: Object,
+  isEdit: Boolean,
 });
 
-const emit = defineEmits(["update:visible", "save"]);
+const emit = defineEmits(["update:visible", "update:task"]);
 
 const task = ref({
   title: props.taskData?.title || "",
@@ -45,6 +47,42 @@ const resolver = ref(
     })
   )
 );
+
+watch(
+  () => props.taskData,
+  (newTaskData) => {
+    if (newTaskData) {
+      task.value = {
+        title: newTaskData.title || "",
+        description: newTaskData.description || "",
+        due_date: newTaskData.due_date || null,
+        priority: newTaskData.priority || "medium",
+      };
+    }
+  },
+  { deep: true, immediate: true }
+);
+
+const submitTask = async ({ valid, values }) => {
+  try {
+    if (!valid) return;
+    const task = {
+      ...values,
+      due_date: values.due_date
+        ? values.due_date.toISOString().split("T")[0]
+        : null,
+    };
+    if (props.isEdit) {
+      await axiosIns.put(`/tasks/${props.taskData.id}/`, task);
+    } else {
+      await axiosIns.post("/tasks/", task);
+    }
+    emit("update:visible", false);
+    emit("update:task");
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>
 
 <template>
@@ -56,13 +94,14 @@ const resolver = ref(
     @update:visible="emit('update:visible', $event)"
   >
     <template #header>
-      {{ props.taskData ? "Edit Task" : "Add Task" }}
+      {{ props.isEdit ? "Edit Task" : "Add Task" }}
     </template>
     <template #default>
       <Form
         v-slot="$form"
+        :initial-values="task"
         :resolver="resolver"
-        @submit="emit('save', task)"
+        @submit="submitTask"
         class="grid grid-cols-1 gap-4"
       >
         <div class="flex flex-col gap-1">
@@ -102,6 +141,7 @@ const resolver = ref(
             v-model="task.due_date"
             dateFormat="yy-mm-dd"
             placeholder="Due Date"
+            :showTime="false"
           />
           <Message
             v-if="$form.due_date?.invalid"

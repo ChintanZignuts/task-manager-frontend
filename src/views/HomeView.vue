@@ -30,5 +30,30 @@ const router = useRouter();
         />
       </template>
     </Card>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+      <Card class="shadow-lg rounded-xl p-6">
+        <template #content>
+          <h2 class="text-2xl font-semibold mb-2">Our Mission</h2>
+          <p class="text-gray-700">
+            Our goal is to provide a seamless and intuitive task management
+            solution that helps you stay organized, boost productivity, and
+            achieve your goals.
+          </p>
+        </template>
+      </Card>
+
+      <!-- Features Card -->
+      <Card class="shadow-lg rounded-xl p-6">
+        <template #content>
+          <h2 class="text-2xl font-semibold mb-2">Why Choose Us?</h2>
+          <ul class="list-disc list-inside text-gray-700">
+            <li>Drag & Drop Task Management</li>
+            <li>Priority & Due Date Indicators</li>
+            <li>Real-Time Updates</li>
+            <li>Simple & Clean Interface</li>
+          </ul>
+        </template>
+      </Card>
+    </div>
   </div>
 </template>
